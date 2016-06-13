@@ -6,7 +6,7 @@
 	"require-dev": {},
 	"autoload": {
         "psr-4": {
-            "Smartmoney\\Stellar\\Account\\": "src"
+            "Smartmoney\\Stellar\\": "src"
         }
     }
 }

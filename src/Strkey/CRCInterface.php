@@ -1,6 +1,6 @@
 <?php
 
-namespace Smartmoney\Stellar\Account\Strkey;
+namespace Smartmoney\Stellar\Strkey;
 
 interface CRCInterface
 {

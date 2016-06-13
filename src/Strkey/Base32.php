@@ -1,6 +1,6 @@
 <?
 
-namespace Smartmoney\Stellar\Account\Strkey;
+namespace Smartmoney\Stellar\Strkey;
 
 class Base32 {
 
