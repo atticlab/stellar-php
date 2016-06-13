@@ -3,7 +3,6 @@
 for use this library - add next lines to your composer.json
 
     "require": {
-        "phpmailer/phpmailer": "^5.2",
         "stellar/isvalidaccount":"dev-master"
     },
     "repositories":[
