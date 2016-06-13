@@ -1,6 +1,6 @@
 <?
 
-namespace App\Lib\Stellar;
+namespace Smartmoney\Stellar\Account;
 
 class Account {
 

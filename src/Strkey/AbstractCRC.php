@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Lib\Stellar\Strkey;
+namespace Smartmoney\Stellar\Account\Strkey;
 
 abstract class AbstractCRC implements CRCInterface
 {
