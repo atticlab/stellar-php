@@ -10,6 +10,31 @@ class Account
         'seed' => 0x90
     );
 
+    public static function isAccountExist($accountId, $host, $port)
+    {
+
+        try {
+            //get account info from stellar
+            $host = trim($host, '/');
+
+            $getLink = 'http://' . $host . ':' . $port . '/accounts/' . $accountId;
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_URL, $getLink);
+            $result = curl_exec($ch);
+            $result = json_decode($result);
+
+            if (isset($result) && !empty($result->account_id) && $result->account_id == $accountId) {
+                return true;
+            }
+
+        } catch (\Phalcon\Exception $e) {
+            return false;
+        }
+        return false;
+    }
+
     public static function isValidAccountId($accountId)
     {
 
