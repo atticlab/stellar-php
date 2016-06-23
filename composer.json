@@ -1,7 +1,8 @@
 {
 	"name": "stellar/isvalidaccount",
 	"require": {
-		"php":">=5.3.0"
+		"php":">=5.3.0",
+		"ext-curl": "*"
 	},
 	"require-dev": {},
 	"autoload": {
