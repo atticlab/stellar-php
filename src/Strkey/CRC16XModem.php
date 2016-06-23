@@ -39,7 +39,8 @@ class CRC16XModem extends CRC16
         0x6e17, 0x7e36, 0x4e55, 0x5e74, 0x2e93, 0x3eb2, 0x0ed1, 0x1ef0
     );
 
-    public function update($data){
+    public function update($data)
+    {
         $crc = 0x0;
         for ($index = 0; $index < count($data); $index++) {
             $byte = $data[$index];
@@ -48,25 +49,15 @@ class CRC16XModem extends CRC16
 
             $code ^= $byte & 0xFF;
             $code ^= $code >> 4;
-            $crc   = $crc << 8 & 0xFFFF;
-            $crc  ^= $code;
-            $code  = $code << 5 & 0xFFFF;
-            $crc  ^= $code;
-            $code  = $code << 7 & 0xFFFF;
-            $crc  ^= $code;
+            $crc = $crc << 8 & 0xFFFF;
+            $crc ^= $code;
+            $code = $code << 5 & 0xFFFF;
+            $crc ^= $code;
+            $code = $code << 7 & 0xFFFF;
+            $crc ^= $code;
         }
 
         $this->checksum = $crc;
     }
 
-    /*public function update($data)
-    {
-        if(is_array($data)){
-            $data = implode('', $data);
-        }
-        $len = strlen($data);
-        for ($i = 0; $i < $len; $i++) {
-            $this->checksum = ($this->lookup[(($this->checksum >> 8) ^ ord($data[$i])) & 0xff] ^ ($this->checksum << 8)) & 0xffff;
-        }
-    }*/
 }

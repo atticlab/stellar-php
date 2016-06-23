@@ -38,10 +38,12 @@ class CRC16 extends AbstractCRC
         0x4400, 0x84c1, 0x8581, 0x4540, 0x8701, 0x47c0, 0x4680, 0x8641,
         0x8201, 0x42c0, 0x4380, 0x8341, 0x4100, 0x81c1, 0x8081, 0x4040
     );
+
     public function pack($checksum)
     {
         return pack('n', $checksum);
     }
+
     public function update($data)
     {
         $len = strlen($data);

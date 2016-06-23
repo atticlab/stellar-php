@@ -22,18 +22,22 @@ abstract class AbstractCRC implements CRCInterface
      * @internal
      */
     public $xorMask = 0x0;
+
     public function __construct()
     {
         $this->reset();
     }
+
     public function finish()
     {
         return $this->pack($this->getChecksum());
     }
+
     public function reset()
     {
         $this->checksum = $this->initChecksum;
     }
+
     /**
      *
      * @internal
@@ -42,6 +46,7 @@ abstract class AbstractCRC implements CRCInterface
     {
         return $this->checksum ^ $this->xorMask;
     }
+
     /**
      *
      * @internal

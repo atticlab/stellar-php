@@ -1,8 +1,9 @@
-<?
+<?php
 
 namespace Smartmoney\Stellar;
 
-class Account {
+class Account
+{
 
     private static $versionBytes = array(
         'accountId' => 0x30,
@@ -34,14 +35,14 @@ class Account {
 
         $decoded = $base32->decode($encoded, true);
 
-        if(empty($decoded) || !is_array($decoded)){
+        if (empty($decoded) || !is_array($decoded)) {
             return false;
         }
 
         $versionByte = $decoded[0];
-        $payload  = array_slice($decoded, 0, -2);
+        $payload = array_slice($decoded, 0, -2);
 
-        $data     = array_slice($payload, 1);
+        $data = array_slice($payload, 1);
         $checksum = array_slice($decoded, -2);
 
 

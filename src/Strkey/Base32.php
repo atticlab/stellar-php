@@ -1,8 +1,9 @@
-<?
+<?php
 
 namespace Smartmoney\Stellar\Strkey;
 
-class Base32 {
+class Base32
+{
 
     private static $map = array(
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', //  7
@@ -25,52 +26,76 @@ class Base32 {
      * @return base32 encoded string
      * @author Bryan Ruiz
      **/
-    public static function encode($input, $padding = true) {
-        if(empty($input)) return "";
+    public static function encode($input, $padding = true)
+    {
+        if (empty($input)) {
+            return "";
+        }
         $input = str_split($input);
         $binaryString = "";
-        for($i = 0; $i < count($input); $i++) {
+        for ($i = 0; $i < count($input); $i++) {
             $binaryString .= str_pad(base_convert(ord($input[$i]), 10, 2), 8, '0', STR_PAD_LEFT);
         }
         $fiveBitBinaryArray = str_split($binaryString, 5);
         $base32 = "";
-        $i=0;
-        while($i < count($fiveBitBinaryArray)) {
-            $base32 .= self::$map[base_convert(str_pad($fiveBitBinaryArray[$i], 5,'0'), 2, 10)];
+        $i = 0;
+        while ($i < count($fiveBitBinaryArray)) {
+            $base32 .= self::$map[base_convert(str_pad($fiveBitBinaryArray[$i], 5, '0'), 2, 10)];
             $i++;
         }
-        if($padding && ($x = strlen($binaryString) % 40) != 0) {
-            if($x == 8) $base32 .= str_repeat(self::$map[32], 6);
-            else if($x == 16) $base32 .= str_repeat(self::$map[32], 4);
-            else if($x == 24) $base32 .= str_repeat(self::$map[32], 3);
-            else if($x == 32) $base32 .= self::$map[32];
+        if ($padding && ($x = strlen($binaryString) % 40) != 0) {
+            if ($x == 8) {
+                $base32 .= str_repeat(self::$map[32], 6);
+            } else {
+                if ($x == 16) {
+                    $base32 .= str_repeat(self::$map[32], 4);
+                } else {
+                    if ($x == 24) {
+                        $base32 .= str_repeat(self::$map[32], 3);
+                    } else {
+                        if ($x == 32) {
+                            $base32 .= self::$map[32];
+                        }
+                    }
+                }
+            }
         }
         return $base32;
     }
 
-    public static function decode($input, $raw = false) {
-        if(empty($input)) return;
-        $paddingCharCount = substr_count($input, self::$map[32]);
-        $allowedValues = array(6,4,3,1,0);
-        if(!in_array($paddingCharCount, $allowedValues)) return false;
-        for($i=0; $i<4; $i++){
-            if($paddingCharCount == $allowedValues[$i] &&
-                substr($input, -($allowedValues[$i])) != str_repeat(self::$map[32], $allowedValues[$i])) return false;
+    public static function decode($input, $raw = false)
+    {
+        if (empty($input)) {
+            return;
         }
-        $input = str_replace('=','', $input);
+        $paddingCharCount = substr_count($input, self::$map[32]);
+        $allowedValues = array(6, 4, 3, 1, 0);
+        if (!in_array($paddingCharCount, $allowedValues)) {
+            return false;
+        }
+        for ($i = 0; $i < 4; $i++) {
+            if ($paddingCharCount == $allowedValues[$i] &&
+                substr($input, -($allowedValues[$i])) != str_repeat(self::$map[32], $allowedValues[$i])
+            ) {
+                return false;
+            }
+        }
+        $input = str_replace('=', '', $input);
         $input = str_split($input);
         $binary = [];
         $binaryString = '';
-        for($i=0; $i < count($input); $i = $i+8) {
+        for ($i = 0; $i < count($input); $i = $i + 8) {
             $x = "";
-            if(!in_array($input[$i], self::$map)) return false;
-            for($j=0; $j < 8; $j++) {
+            if (!in_array($input[$i], self::$map)) {
+                return false;
+            }
+            for ($j = 0; $j < 8; $j++) {
                 $x .= str_pad(base_convert(@self::$flippedMap[@$input[$i + $j]], 10, 2), 5, '0', STR_PAD_LEFT);
             }
             $eightBits = str_split($x, 8);
-            for($z = 0; $z < count($eightBits); $z++) {
+            for ($z = 0; $z < count($eightBits); $z++) {
                 $binary[] = base_convert($eightBits[$z], 2, 10);
-                $binaryString .= ( ($y = chr(base_convert($eightBits[$z], 2, 10))) || ord($y) == 48 ) ? $y:"";
+                $binaryString .= (($y = chr(base_convert($eightBits[$z], 2, 10))) || ord($y) == 48) ? $y : "";
             }
         }
 
