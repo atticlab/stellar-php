@@ -49,6 +49,30 @@ class Account
         return true;
     }
 
+    public static function getAccountType($accountId, $host, $port)
+    {
+
+        try {
+            //get account info from stellar
+            $host = trim($host, '/');
+
+            $getLink = 'http://' . $host . ':' . $port . '/accounts/' . $accountId;
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_URL, $getLink);
+            $result = curl_exec($ch);
+            $result = json_decode($result);
+
+            if (isset($result) && !empty($result->account_id) && $result->account_id == $accountId && isset($result->type_i)) {
+                return $result->type_i;
+            }
+
+        } catch (\Phalcon\Exception $e) {
+            return -1;
+        }
+        return -1;
+    }
 
     private static function decodeCheck($versionByteName, $encoded)
     {
