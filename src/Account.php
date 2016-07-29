@@ -82,7 +82,7 @@ class Account
 
         $versionByte = self::$versionBytes[$versionByteName];
 
-        if(empty($expectedVersion)){
+        if(empty($versionByte)){
             return false;
         }
 
