@@ -74,6 +74,27 @@ class Account
         return -1;
     }
 
+    public static function encodeCheck($versionByteName, $data)
+    {
+        if(empty($data)){
+            return false;
+        }
+
+        $versionByte = self::$versionBytes[$versionByteName];
+
+        if(empty($expectedVersion)){
+            return false;
+        }
+
+        //$data = [$data];
+        $versionBuffer = [$versionByte];
+        $payload = array_merge($versionBuffer, $data);
+        $checksum = self::calculateChecksum($payload);
+
+        return array_merge($payload, $checksum);
+
+    }
+
     private static function decodeCheck($versionByteName, $encoded)
     {
         if (!is_string($encoded)) {
