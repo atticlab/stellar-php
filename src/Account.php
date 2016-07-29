@@ -86,7 +86,7 @@ class Account
             return false;
         }
 
-        //$data = [$data];
+        $data = [$data];
         $versionBuffer = [$versionByte];
         $payload = array_merge($versionBuffer, $data);
         $checksum = self::calculateChecksum($payload);
