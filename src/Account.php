@@ -14,7 +14,6 @@ class Account
     {
 
         try {
-            //get account info from stellar
             $host = trim($host, '/');
 
             $getLink = 'http://' . $host . ':' . $port . '/accounts/' . $accountId;
@@ -22,8 +21,7 @@ class Account
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_URL, $getLink);
-            $result = curl_exec($ch);
-            $result = json_decode($result);
+            $result = json_decode(curl_exec($ch));
 
             if (isset($result) && !empty($result->account_id) && $result->account_id == $accountId) {
                 return true;
@@ -53,7 +51,6 @@ class Account
     {
 
         try {
-            //get account info from stellar
             $host = trim($host, '/');
 
             $getLink = 'http://' . $host . ':' . $port . '/accounts/' . $accountId;
@@ -61,8 +58,7 @@ class Account
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_URL, $getLink);
-            $result = curl_exec($ch);
-            $result = json_decode($result);
+            $result = json_decode(curl_exec($ch));
 
             if (isset($result) && !empty($result->account_id) && $result->account_id == $accountId && isset($result->type_i)) {
                 return $result->type_i;
@@ -72,6 +68,33 @@ class Account
             return -1;
         }
         return -1;
+    }
+
+    public static function getAccountLastTXs($accountId, $count, $host, $port)
+    {
+        try {
+            $host = trim($host, '/');
+
+            $params = http_build_query([
+                'order' => 'desc',
+                'limit' => $count
+            ]);
+
+            $getLink = 'http://' . $host . ':' . $port . '/accounts/' . $accountId . '/transactions?' . $params;
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_URL, $getLink);
+            $result = json_decode(curl_exec($ch));
+
+            if (isset($result) && !empty($result->_embedded) && !empty($result->_embedded->records) ) {
+                return $result->_embedded->records;
+            }
+
+        } catch (\Phalcon\Exception $e) {
+            return [];
+        }
+        return [];
     }
 
     public static function encodeCheck($versionByteName, $data)
