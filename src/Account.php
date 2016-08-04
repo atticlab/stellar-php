@@ -80,18 +80,24 @@ class Account
             return false;
         }
 
+        $data = unpack('C*', base64_decode($data));
         $versionByte = self::$versionBytes[$versionByteName];
 
         if(empty($versionByte)){
             return false;
         }
 
-        $data = [$data];
-        $versionBuffer = [$versionByte];
-        $payload = array_merge($versionBuffer, $data);
-        $checksum = self::calculateChecksum($payload);
+        array_unshift($data, $versionByte);
+        $checksum = self::calculateChecksum($data);
 
-        return array_merge($payload, $checksum);
+        $data = array_merge($data, $checksum);
+        $data = array_map(function($a){
+            return chr($a);
+        }, $data);
+
+        $data = implode($data);
+        $base32 = new Strkey\Base32();
+        return $base32->encode($data);
 
     }
 
