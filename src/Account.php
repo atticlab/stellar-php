@@ -5,6 +5,14 @@ namespace Smartmoney\Stellar;
 class Account
 {
 
+    const TYPE_ANONYMOUS     = 0;
+    const TYPE_REGISTERED    = 1;
+    const TYPE_MERCHANT      = 2;
+    const TYPE_DISTRIBUTION  = 3;
+    const TYPE_SETTLEMENT    = 4;
+    const TYPE_EXCHANGE      = 5;
+    const TYPE_BANK          = 6;
+
     private static $versionBytes = array(
         'accountId' => 0x30,
         'seed' => 0x90
