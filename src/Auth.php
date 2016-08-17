@@ -7,16 +7,31 @@ class Auth
 
     private $session;
     private $allowed_type;
+    private $verify_existing;
     private $token;
-    private $config;
+    private $horizon_host;
+    private $horizon_port;
 
     private $request_body;
     private $signature;
     private $data;
 
-    function __construct($session_key)
+    function __construct($session_key, $horizon_host, $horizon_port)
     {
-        $this->config = \Phalcon\Di::getDefault()->get('config');
+        if (empty($session_key)) {
+            throw new \InvalidArgumentException('empty session key');
+        }
+
+        if (empty($horizon_host)) {
+            throw new \InvalidArgumentException('empty horizon host');
+        }
+
+        if (empty($horizon_port)) {
+            throw new \InvalidArgumentException('empty horizon port');
+        }
+
+        $this->verify_existing = true;
+
         $this->session = new \Phalcon\Session\Bag($session_key);
         $request = new \Phalcon\Http\Request();
 
@@ -48,6 +63,11 @@ class Auth
     public function setAllowedType($type)
     {
         $this->allowed_type = $type;
+    }
+
+    public function setVerifyExisting($verify_existing)
+    {
+        $this->verify_existing = filter_var($verify_existing, FILTER_VALIDATE_BOOLEAN);
     }
 
     public function getToken()
@@ -100,14 +120,20 @@ class Auth
 
     private function checkAccountType($acc_id)
     {
-        if (\Smartmoney\Stellar\Account::isValidAccountId($acc_id) &&
-            \Smartmoney\Stellar\Account::isAccountExist($acc_id, $this->config->horizon->host,
-                $this->config->horizon->port)
-        ) {
+        if (\Smartmoney\Stellar\Account::isValidAccountId($acc_id)) {
+            if($this->verify_existing){
+
+                if(!\Smartmoney\Stellar\Account::isAccountExist($acc_id, $this->horizon_host,
+                    $this->horizon_port)) {
+                    return false;
+                }
+
+            }
+
             //if set allowed type - check for match account type
             if (!is_null($this->allowed_type)) {
-                if (\Smartmoney\Stellar\Account::getAccountType($acc_id, $this->config->horizon->host,
-                        $this->config->horizon->port) == $this->allowed_type
+                if (\Smartmoney\Stellar\Account::getAccountType($acc_id, $this->horizon_host,
+                        $this->horizon_port) == $this->allowed_type
                 ) {
                     return true;
                 } else {
