@@ -46,9 +46,8 @@ class Helpers
      * Fetch master account details from horizon server
      * @throws Exception
      */
-    public function masterAccountInfo($horizon_host, $horizon_port)
+    public static function masterAccountInfo($masterPubKey, $horizon_host, $horizon_port)
     {
-        $masterPubKey = $this->config->master->public;
         if (empty($masterPubKey)) {
             throw new \Exception('Empty Master account public key');
         }
