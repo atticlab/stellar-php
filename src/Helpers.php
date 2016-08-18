@@ -64,6 +64,12 @@ class Helpers
         return $master;
     }
 
+    /**
+     * Fetch transaction details from horizon server
+     * @param string $tx_hash
+     * @throws \Exception
+     * @return \stdClass
+     */
     public static function horizonTransactionInfo($tx_hash, $horizon_host, $horizon_port)
     {
         if (empty($horizon_host)) {
