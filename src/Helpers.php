@@ -14,6 +14,10 @@ class Helpers
      */
     public static function horizonAccountInfo($account_id, $horizon_host, $horizon_port)
     {
+        if (empty($account_id)) {
+            throw new \Exception('Empty Master account public key');
+        }
+
         if (empty($horizon_host)) {
             throw new \Exception('Empty Horizon host');
         }
@@ -58,5 +62,37 @@ class Helpers
         }
 
         return $master;
+    }
+
+    public static function horizonTransactionInfo($tx_hash, $horizon_host, $horizon_port)
+    {
+        if (empty($horizon_host)) {
+            throw new \Exception('Empty Horizon host in config');
+        }
+
+        if (empty($horizon_port)) {
+            throw new \Exception('Empty Horizon port in config');
+        }
+
+        $tx_hash = trim(strtolower($tx_hash));
+        if (!preg_match('/[0-9a-f]{64}/', $tx_hash)) {
+
+            return null;
+        }
+
+        $url = 'http://' . $horizon_host . ':' . $horizon_port . '/transactions/' . $tx_hash;
+        $json = @file_get_contents($url);
+        if ($json === false) {
+
+            return false;
+        }
+
+        $info = json_decode($json);
+        if (empty($info)) {
+
+            return false;
+        }
+
+        return $info;
     }
 }
