@@ -4,7 +4,6 @@ namespace Smartmoney\Stellar;
 
 class Auth
 {
-
     private $session;
     private $allowed_type;
     private $verify_existing;
@@ -91,8 +90,9 @@ class Auth
                 $this->session->auth_token = self::generateCSRFToken();
 
                 $data = [
-                    'acc_id' => $acc_id,
+                    'acc_id'     => $acc_id,
                     'auth_token' => $this->session->auth_token,
+                    'username'   => $this->data['username']
                 ];
 
                 return $data;
@@ -112,7 +112,8 @@ class Auth
             if (!empty($this->data['publicKey']) && !empty($this->data['token'])) {
 
                 // Check signature
-                $is_signed = ed25519_sign_open($this->request_body, base64_decode($this->data['publicKey']), base64_decode($this->signature));
+                $is_signed = ed25519_sign_open($this->request_body, base64_decode($this->data['publicKey']),
+                    base64_decode($this->signature));
 
                 return $is_signed;
 
@@ -125,10 +126,11 @@ class Auth
     private function checkAccountType($acc_id)
     {
         if (\Smartmoney\Stellar\Account::isValidAccountId($acc_id)) {
-            if($this->verify_existing){
+            if ($this->verify_existing) {
 
-                if(!\Smartmoney\Stellar\Account::isAccountExist($acc_id, $this->horizon_host,
-                    $this->horizon_port)) {
+                if (!\Smartmoney\Stellar\Account::isAccountExist($acc_id, $this->horizon_host,
+                    $this->horizon_port)
+                ) {
                     return false;
                 }
 
@@ -144,8 +146,10 @@ class Auth
                     return false;
                 }
             }
+
             return true;
         }
+
         return false;
     }
 
