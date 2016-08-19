@@ -26,9 +26,13 @@ class Auth
             throw new \InvalidArgumentException('empty horizon host');
         }
 
+        $this->horizon_host = $horizon_host;
+
         if (empty($horizon_port)) {
             throw new \InvalidArgumentException('empty horizon port');
         }
+
+        $this->horizon_port = $horizon_port;
 
         $this->verify_existing = true;
 
