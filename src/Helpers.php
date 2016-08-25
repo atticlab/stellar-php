@@ -101,4 +101,22 @@ class Helpers
 
         return $info;
     }
+
+    /**
+     * Fetch admins list from master account info
+     */
+    public static function getAdminsList($master, $admins_weight)
+    {
+        $admins = [];
+
+        if (!empty($master->signers)) {
+            foreach ($master->signers as $signer) {
+                if ($signer->weight == $admins_weight) {
+                    $admins[] = $signer->public_key;
+                }
+            }
+        }
+
+        return $admins;
+    }
 }
