@@ -5,18 +5,85 @@ namespace Smartmoney\Stellar;
 class Account
 {
 
-    const TYPE_ANONYMOUS     = 0;
-    const TYPE_REGISTERED    = 1;
-    const TYPE_MERCHANT      = 2;
-    const TYPE_DISTRIBUTION  = 3;
-    const TYPE_SETTLEMENT    = 4;
-    const TYPE_EXCHANGE      = 5;
-    const TYPE_BANK          = 6;
+    const TYPE_ANONYMOUS = 0;
+    const TYPE_REGISTERED = 1;
+    const TYPE_MERCHANT = 2;
+    const TYPE_DISTRIBUTION = 3;
+    const TYPE_SETTLEMENT = 4;
+    const TYPE_EXCHANGE = 5;
+    const TYPE_BANK = 6;
 
     private static $versionBytes = array(
         'accountId' => 0x30,
         'seed' => 0x90
     );
+
+    /**
+     * @param $accountId - account id in stellar
+     * @param $host - horizon host
+     * @param $port - horizon port
+     * @param bool $asset_code - array|string|null - asset code|codes
+     * @return array|bool
+     */
+    public static function getAccountBalances($accountId, $host, $port, $asset_code = false)
+    {
+
+        try {
+            $host = trim($host, '/');
+
+            $getLink = 'http://' . $host . ':' . $port . '/accounts/' . $accountId;
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_URL, $getLink);
+            $result = json_decode(curl_exec($ch));
+
+            if (isset($result) && !empty($result->account_id) && $result->account_id == $accountId && isset($result->balances)) {
+                if (count($result->balances) == 0) {
+                    return false;
+                }
+
+                $balances = [];
+
+                if (!empty($asset_code)) {
+
+                    if (is_string($asset_code)) {
+                        foreach ($result->balances as $balance) {
+                            if (!empty($balance->asset_code) && $balance->asset_code == $asset_code) {
+                                $balances[$balance->asset_code] = $balance->balance;
+
+                                return $balances;
+                            }
+                        }
+                    }
+
+                    if (is_array($asset_code)) {
+                        foreach ($result->balances as $balance) {
+                            if (!empty($balance->asset_code) && in_array($balance->asset_code, $asset_code)) {
+                                $balances[$balance->asset_code] = $balance->balance;
+                            }
+                        }
+
+                        return $balances;
+                    }
+
+                } else {
+                    foreach ($result->balances as $balance) {
+                        if (!empty($balance->asset_code)) {
+                            $balances[$balance->asset_code] = $balance->balance;
+                        }
+                    }
+
+                    return $balances;
+                }
+            }
+
+        } catch (\Phalcon\Exception $e) {
+            return false;
+        }
+        return false;
+
+    }
 
     public static function isAccountExist($accountId, $host, $port)
     {
@@ -95,7 +162,7 @@ class Account
             curl_setopt($ch, CURLOPT_URL, $getLink);
             $result = json_decode(curl_exec($ch));
 
-            if (isset($result) && !empty($result->_embedded) && !empty($result->_embedded->records) ) {
+            if (isset($result) && !empty($result->_embedded) && !empty($result->_embedded->records)) {
                 return $result->_embedded->records;
             }
 
@@ -107,14 +174,14 @@ class Account
 
     public static function encodeCheck($versionByteName, $data)
     {
-        if(empty($data)){
+        if (empty($data)) {
             return false;
         }
 
         $data = unpack('C*', base64_decode($data));
         $versionByte = self::$versionBytes[$versionByteName];
 
-        if(empty($versionByte)){
+        if (empty($versionByte)) {
             return false;
         }
 
@@ -122,7 +189,7 @@ class Account
         $checksum = self::calculateChecksum($data);
 
         $data = array_merge($data, $checksum);
-        $data = array_map(function($a){
+        $data = array_map(function ($a) {
             return chr($a);
         }, $data);
 
