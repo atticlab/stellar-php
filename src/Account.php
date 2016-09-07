@@ -18,6 +18,16 @@ class Account
         'seed' => 0x90
     );
 
+    private static $text_account_types = array(
+        self::TYPE_ANONYMOUS    => 'anonymous',
+        self::TYPE_REGISTERED   => 'registered',
+        self::TYPE_MERCHANT     => 'merchant',
+        self::TYPE_DISTRIBUTION => 'distribution',
+        self::TYPE_SETTLEMENT   => 'settlement',
+        self::TYPE_EXCHANGE     => 'exchange',
+        self::TYPE_BANK         => 'bank'
+    );
+
     /**
      * @param $accountId - account id in stellar
      * @param $host - horizon host
@@ -284,5 +294,14 @@ class Account
         $crc16->update($payload);
 
         return self::uInt16($crc16->getChecksum(), 0);
+    }
+
+    private static function getTextAccountTypeById($id)
+    {
+        if(array_key_exists($id, self::$text_account_types)){
+            return self::$text_account_types[$id];
+        }
+
+        return false;
     }
 }
