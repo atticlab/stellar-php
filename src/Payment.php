@@ -44,7 +44,6 @@ class Payment {
         if (!empty($amount) && !empty($asset) && !empty($account)) {
 
             $amount  = (float)number_format($amount, 2, '.', '');
-            $asset   = $asset;
             $account = mb_strtoupper($account);
 
             if (
