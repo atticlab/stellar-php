@@ -296,7 +296,7 @@ class Account
         return self::uInt16($crc16->getChecksum(), 0);
     }
 
-    private static function getTextAccountTypeById($id)
+    public static function getTextAccountTypeById($id)
     {
         if(array_key_exists($id, self::$text_account_types)){
             return self::$text_account_types[$id];
