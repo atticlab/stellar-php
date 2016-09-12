@@ -46,11 +46,8 @@ class Payment {
             $amount  = (float)number_format($amount, 2, '.', '');
             $account = mb_strtoupper($account);
 
-            if (
-                Account::isValidAccountId($account) &&
-                Account::isAccountExist($account, $config->horizon->host,
-                    $config->horizon->port)
-            ) {
+            if (Account::isValidAccountId($account)) {
+
                 $data = [
                     'accountId' => $account,
                     'amount'    => $amount,
