@@ -9,11 +9,31 @@ class Auth
     private $signature;
     private $data;
 
-    function __construct()
+    private $horizon_host;
+    private $horizon_port;
+
+    function __construct($horizon_host, $horizon_port)
     {
         $this->signature    = !empty($_SERVER['HTTP_X_AUTH']) ? $_SERVER['HTTP_X_AUTH'] : null;
         $this->request_body = file_get_contents('php://input');
         $this->data         = json_decode($this->request_body, true);
+
+        $this->horizon_host = $horizon_host;
+        $this->horizon_port = $horizon_port;
+    }
+
+    /**
+     * @param $account - account id
+     * @param $allowed_types  - array of types ids
+     */
+    public function checkAccountType($account, $allowed_types) {
+
+        if (!is_array($allowed_types)) {
+            $allowed_types = [$allowed_types];
+        }
+
+        return in_array(Account::getAccountType($account, $this->horizon_host, $this->horizon_port), $allowed_types);
+
     }
 
     public function getAuthData()
