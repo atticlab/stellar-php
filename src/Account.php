@@ -13,7 +13,7 @@ class Account
     const TYPE_EXCHANGE = 5;
     const TYPE_BANK = 6;
 
-    const TYPE_ADMIN = 99; //admin account info can not get from horizon, need to check master account signers
+    const TYPE_ADMIN = 99; //admin account info can not get from horizon, need to check master account signe
 
     private static $versionBytes = array(
         'accountId' => 0x30,
@@ -211,7 +211,7 @@ class Account
 
     }
 
-    private static function decodeCheck($versionByteName, $encoded)
+    public static function decodeCheck($versionByteName, $encoded)
     {
         if (!is_string($encoded)) {
             throw new \Exception("encoded argument must be of type String");
