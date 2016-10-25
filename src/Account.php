@@ -13,6 +13,8 @@ class Account
     const TYPE_EXCHANGE = 5;
     const TYPE_BANK = 6;
 
+    const TYPE_ADMIN = 99; //admin account info can not get from horizon, need to check master account signers
+
     private static $versionBytes = array(
         'accountId' => 0x30,
         'seed' => 0x90
