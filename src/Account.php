@@ -5,6 +5,8 @@ namespace Smartmoney\Stellar;
 class Account
 {
 
+    const TYPE_NOT_CREATED = -1;
+
     const TYPE_ANONYMOUS = 0;
     const TYPE_REGISTERED = 1;
     const TYPE_MERCHANT = 2;
