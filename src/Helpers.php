@@ -10,7 +10,7 @@ class Helpers
      * @param string $horizon_host
      * @param string $horizon_port
      * @throws \Exception
-     * @return \stdClass
+     * @return mixed
      */
     public static function horizonAccountInfo($account_id, $horizon_host, $horizon_port)
     {
@@ -33,8 +33,14 @@ class Helpers
         }
 
         $url = 'http://' . $horizon_host . ':' . $horizon_port . '/accounts/' . $account_id;
-        $json = @file_get_contents($url);
-        if ($json === false) {
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $json = curl_exec($ch);
+
+        if (empty($json)) {
             return false;
         }
 
@@ -68,7 +74,7 @@ class Helpers
      * Fetch transaction details from horizon server
      * @param string $tx_hash
      * @throws \Exception
-     * @return \stdClass
+     * @return mixed
      */
     public static function horizonTransactionInfo($tx_hash, $horizon_host, $horizon_port)
     {
@@ -87,9 +93,14 @@ class Helpers
         }
 
         $url = 'http://' . $horizon_host . ':' . $horizon_port . '/transactions/' . $tx_hash;
-        $json = @file_get_contents($url);
-        if ($json === false) {
 
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $json = curl_exec($ch);
+
+        if (empty($json)) {
             return false;
         }
 
