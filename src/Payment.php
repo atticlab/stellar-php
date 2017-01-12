@@ -19,14 +19,6 @@ class Payment {
             throw new \Exception(Error::BAD_CONFIG . ' (emission->url)');
         }
 
-        if(empty($config->horizon->host)){
-            throw new \Exception(Error::BAD_CONFIG . ' (horizon->host)');
-        }
-
-        if(empty($config->horizon->port)){
-            throw new \Exception(Error::BAD_CONFIG . ' (horizon->port)');
-        }
-
     }
     /**
      * @param $account - string
