@@ -34,18 +34,17 @@ class Account
 
     /**
      * @param $accountId - account id in stellar
-     * @param $host - horizon host
-     * @param $port - horizon port
+     * @param $horizon_host - horizon host
      * @param bool $asset_code - array|string|null - asset code|codes
      * @return array|bool
      */
-    public static function getAccountBalances($accountId, $host, $port, $asset_code = false)
+    public static function getAccountBalances($accountId, $horizon_host, $asset_code = false)
     {
 
         try {
-            $host = trim($host, '/');
+            $horizon_host = rtrim($horizon_host, '/');
 
-            $getLink = 'http://' . $host . ':' . $port . '/accounts/' . $accountId;
+            $getLink = $horizon_host . '/accounts/' . $accountId;
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -99,13 +98,13 @@ class Account
 
     }
 
-    public static function isAccountExist($accountId, $host, $port)
+    public static function isAccountExist($accountId, $horizon_host)
     {
 
         try {
-            $host = trim($host, '/');
+            $horizon_host = rtrim($horizon_host, '/');
 
-            $getLink = 'http://' . $host . ':' . $port . '/accounts/' . $accountId;
+            $getLink = $horizon_host . '/accounts/' . $accountId;
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -136,13 +135,13 @@ class Account
         return true;
     }
 
-    public static function getAccountType($accountId, $host, $port)
+    public static function getAccountType($accountId, $horizon_host)
     {
 
         try {
-            $host = trim($host, '/');
+            $horizon_host = rtrim($horizon_host, '/');
 
-            $getLink = 'http://' . $host . ':' . $port . '/accounts/' . $accountId;
+            $getLink = $horizon_host . '/accounts/' . $accountId;
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -159,17 +158,17 @@ class Account
         return -1;
     }
 
-    public static function getAccountLastTXs($accountId, $count, $host, $port)
+    public static function getAccountLastTXs($accountId, $count, $horizon_host)
     {
         try {
-            $host = trim($host, '/');
+            $horizon_host = rtrim($horizon_host, '/');
 
             $params = http_build_query([
                 'order' => 'desc',
                 'limit' => $count
             ]);
 
-            $getLink = 'http://' . $host . ':' . $port . '/accounts/' . $accountId . '/transactions?' . $params;
+            $getLink = $horizon_host . '/accounts/' . $accountId . '/transactions?' . $params;
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
