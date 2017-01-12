@@ -10,16 +10,14 @@ class Auth
     private $data;
 
     private $horizon_host;
-    private $horizon_port;
 
-    function __construct($horizon_host, $horizon_port)
+    function __construct($horizon_host)
     {
         $this->signature    = !empty($_SERVER['HTTP_X_AUTH']) ? $_SERVER['HTTP_X_AUTH'] : null;
         $this->request_body = file_get_contents('php://input');
         $this->data         = json_decode($this->request_body, true);
 
         $this->horizon_host = $horizon_host;
-        $this->horizon_port = $horizon_port;
     }
 
     /**
@@ -32,7 +30,7 @@ class Auth
             $allowed_types = [$allowed_types];
         }
 
-        return in_array(Account::getAccountType($account, $this->horizon_host, $this->horizon_port), $allowed_types);
+        return in_array(Account::getAccountType($account, $this->horizon_host), $allowed_types);
 
     }
 

@@ -8,11 +8,10 @@ class Helpers
      * Fetch account details from horizon API
      * @param string $account_id
      * @param string $horizon_host
-     * @param string $horizon_port
      * @throws \Exception
      * @return mixed
      */
-    public static function horizonAccountInfo($account_id, $horizon_host, $horizon_port)
+    public static function horizonAccountInfo($account_id, $horizon_host)
     {
         if (empty($account_id)) {
             throw new \Exception('Empty Master account public key');
@@ -22,17 +21,13 @@ class Helpers
             throw new \Exception('Empty Horizon host');
         }
 
-        if (empty($horizon_port)) {
-            throw new \Exception('Empty Horizon port');
-        }
-
         $account_id = trim(strtoupper($account_id));
 
         if (!\Smartmoney\Stellar\Account::isValidAccountId($account_id)){
             return null;
         }
 
-        $url = 'http://' . $horizon_host . ':' . $horizon_port . '/accounts/' . $account_id;
+        $url = rtrim($horizon_host, '/') . '/accounts/' . $account_id;
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -56,13 +51,13 @@ class Helpers
      * Fetch master account details from horizon server
      * @throws Exception
      */
-    public static function masterAccountInfo($masterPubKey, $horizon_host, $horizon_port)
+    public static function masterAccountInfo($masterPubKey, $horizon_host)
     {
         if (empty($masterPubKey)) {
             throw new \Exception('Empty Master account public key');
         }
 
-        $master = self::horizonAccountInfo($masterPubKey, $horizon_host, $horizon_port);
+        $master = self::horizonAccountInfo($masterPubKey, $horizon_host);
         if (empty($master->id)) {
             throw new \Exception('Failed to get master account info');
         }
@@ -76,14 +71,10 @@ class Helpers
      * @throws \Exception
      * @return mixed
      */
-    public static function horizonTransactionInfo($tx_hash, $horizon_host, $horizon_port)
+    public static function horizonTransactionInfo($tx_hash, $horizon_host)
     {
         if (empty($horizon_host)) {
             throw new \Exception('Empty Horizon host in config');
-        }
-
-        if (empty($horizon_port)) {
-            throw new \Exception('Empty Horizon port in config');
         }
 
         $tx_hash = trim(strtolower($tx_hash));
@@ -92,7 +83,7 @@ class Helpers
             return null;
         }
 
-        $url = 'http://' . $horizon_host . ':' . $horizon_port . '/transactions/' . $tx_hash;
+        $url = rtrim($horizon_host, '/') . '/transactions/' . $tx_hash;
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
