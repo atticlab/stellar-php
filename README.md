@@ -3,7 +3,7 @@
 for use this library - add next lines to your composer.json
 
     "require": {
-        "stellar/isvalidaccount":"dev-master"
+        "atticlab/stellar-php-sdk":"dev-master"
     },
     "repositories":[
         {
