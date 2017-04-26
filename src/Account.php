@@ -310,4 +310,13 @@ class Account
 
         return false;
     }
+
+    public static function getPublicKeyFromAccountId($account_id)
+    {
+        $raw_public_key = array_map(function ($a) {
+            return chr($a);
+        }, self::decodeCheck('accountId', $account_id));
+
+        return implode($raw_public_key);
+    }
 }
