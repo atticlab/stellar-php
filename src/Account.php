@@ -2,6 +2,8 @@
 
 namespace Smartmoney\Stellar;
 
+use Exception;
+
 class Account
 {
 
@@ -17,12 +19,12 @@ class Account
 
     const TYPE_ADMIN = 99; //admin account info can not get from horizon, need to check master account signe
 
-    private static $versionBytes = array(
+    private static $versionBytes = [
         'accountId' => 0x30,
-        'seed' => 0x90
-    );
+        'seed'      => 0x90
+    ];
 
-    private static $text_account_types = array(
+    private static $text_account_types = [
         self::TYPE_ANONYMOUS    => 'anonymous',
         self::TYPE_REGISTERED   => 'registered',
         self::TYPE_MERCHANT     => 'merchant',
@@ -30,12 +32,12 @@ class Account
         self::TYPE_SETTLEMENT   => 'settlement',
         self::TYPE_EXCHANGE     => 'exchange',
         self::TYPE_BANK         => 'bank'
-    );
+    ];
 
     /**
-     * @param $accountId - account id in stellar
-     * @param $horizon_host - horizon host
-     * @param bool $asset_code - array|string|null - asset code|codes
+     * @param      $accountId    - account id in stellar
+     * @param      $horizon_host - horizon host
+     * @param bool $asset_code   - array|string|null - asset code|codes
      * @return array|bool
      */
     public static function getAccountBalances($accountId, $horizon_host, $asset_code = false)
@@ -91,16 +93,16 @@ class Account
                 }
             }
 
-        } catch (\Phalcon\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
+
         return false;
 
     }
 
     public static function isAccountExist($accountId, $horizon_host)
     {
-
         try {
             $horizon_host = rtrim($horizon_host, '/');
 
@@ -115,24 +117,26 @@ class Account
                 return true;
             }
 
-        } catch (\Phalcon\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
+
         return false;
     }
 
     public static function isValidAccountId($accountId)
     {
+        if (empty($accountId)) {
+            return false;
+        }
 
         try {
             $decoded = self::decodeCheck("accountId", $accountId);
-            if (count($decoded) !== 32) {
-                return false;
-            }
-        } catch (\Phalcon\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
-        return true;
+
+        return count($decoded) == 32;
     }
 
     public static function getAccountType($accountId, $horizon_host)
@@ -152,9 +156,10 @@ class Account
                 return $result->type_i;
             }
 
-        } catch (\Phalcon\Exception $e) {
+        } catch (Exception $e) {
             return -1;
         }
+
         return -1;
     }
 
@@ -179,9 +184,10 @@ class Account
                 return $result->_embedded->records;
             }
 
-        } catch (\Phalcon\Exception $e) {
+        } catch (Exception $e) {
             return [];
         }
+
         return [];
     }
 
@@ -208,6 +214,7 @@ class Account
 
         $data = implode($data);
         $base32 = new Strkey\Base32();
+
         return $base32->encode($data);
 
     }
@@ -215,7 +222,7 @@ class Account
     public static function decodeCheck($versionByteName, $encoded)
     {
         if (!is_string($encoded)) {
-            throw new \Exception("encoded argument must be of type String");
+            throw new Exception("encoded argument must be of type String");
         }
 
         $base32 = new Strkey\Base32();
@@ -232,26 +239,22 @@ class Account
         $data = array_slice($payload, 1);
         $checksum = array_slice($decoded, -2);
 
-
         if ($base32->encode($base32->decode($encoded)) != $encoded) {
-            //throw new \Exception('invalid encoded string');
             return false;
         }
 
         $expectedVersion = self::$versionBytes[$versionByteName];
         if (empty($expectedVersion)) {
-            //throw new \Exception($versionByteName . ' is not a valid version byte name.  expected one of "accountId" or "seed"');
             return false;
         }
+
         if ($versionByte != $expectedVersion) {
-            //throw new \Exception('invalid version byte. expected ' . $expectedVersion . ', got ' . $versionByte);
             return false;
         }
 
         $expectedChecksum = self::calculateChecksum($payload);
 
         if (!self::verifyChecksum($expectedChecksum, $checksum)) {
-            //throw new \Exception('invalid checksum');
             return false;
         }
 
@@ -301,7 +304,7 @@ class Account
 
     public static function getTextAccountTypeById($id)
     {
-        if(array_key_exists($id, self::$text_account_types)){
+        if (array_key_exists($id, self::$text_account_types)) {
             return self::$text_account_types[$id];
         }
 
