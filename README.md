@@ -8,6 +8,6 @@ for use this library - add next lines to your composer.json
     "repositories":[
         {
             "type":"git",
-            "url":"https://bitbucket.org/atticlab/stellar-php"
+            "url":"https://github.com/atticlab/stellar-php"
         }
     ]
